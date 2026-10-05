@@ -1,0 +1,236 @@
+/* ==========================================================
+   board.css — страница доски (#/board/:id): шапка, колонки, карточки, DnD
+   ========================================================== */
+
+/* Страница занимает всё место под шапкой; скроллятся только колонки */
+.page--board {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* ---------- Шапка доски ---------- */
+.board-head {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5) var(--space-3);
+}
+.board-head__top { display: flex; align-items: center; gap: var(--space-2); }
+
+.board-title {
+  min-width: 0;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  font-size: 1.15rem;
+  font-weight: 650;
+  letter-spacing: -.01em;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: background var(--t-fast);
+}
+.board-title:hover { background: var(--surface-hover); }
+
+.board-members {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 4px 8px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-muted);
+  font-size: .82rem;
+}
+.board-members:hover { background: var(--surface-hover); color: var(--text); }
+
+.avatar-stack { display: inline-flex; }
+.avatar-stack .avatar { border: 2px solid var(--bg); }
+.avatar-stack .avatar + .avatar { margin-left: -8px; }
+
+/* Строка поиска и фильтров: поиск слева, фильтры справа */
+.board-filters { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-1); }
+.board-filters .input { width: 220px; margin-right: var(--space-2); font-size: .85rem; padding-top: 6px; padding-bottom: 6px; }
+.board-filters .select {
+  width: auto;
+  min-width: 0;
+  padding: 6px 8px;
+  border-color: transparent;
+  background-color: transparent;
+  color: var(--text-muted);
+  font-size: .85rem;
+}
+.board-filters .select:hover { background-color: var(--surface-hover); color: var(--text); }
+.board-filters [data-f="assignee"] { margin-left: auto; }
+
+/* ---------- Область колонок ---------- */
+.board-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: var(--space-5);
+}
+/* Колонки тянутся на всю высоту, как на макете */
+.board-columns {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-4);
+  height: 100%;
+  padding: var(--space-2) var(--space-5) 0;
+  width: max-content;
+  min-width: 100%;
+}
+
+/* ---------- Колонка ---------- */
+.column {
+  flex: 1 0 272px;
+  width: 272px;          /* задаёт «естественную» ширину, дальше колонки растут до max-width */
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  scroll-snap-align: start;
+  transition: border-color var(--t-fast), background var(--t-fast), opacity var(--t-fast);
+}
+.column.is-over { border-color: var(--accent); background: var(--accent-soft); }
+.column.is-dragging { opacity: .5; }
+.column.is-over-limit .column__count { color: var(--danger); font-weight: 700; }
+
+.column__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-2) var(--space-2) var(--space-4);
+  cursor: grab;
+}
+.column__header:active { cursor: grabbing; }
+.column__header .btn--icon { width: 26px; height: 26px; }
+.column__header .btn--icon svg { width: 15px; height: 15px; }
+.column__name { min-width: 0; font-size: .88rem; }
+.column__count { margin-right: auto; color: var(--text-muted); font-size: .85rem; font-weight: 500; }
+
+.column__cards {
+  flex: 0 1 auto;
+  min-height: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-1) var(--space-3);
+  overflow-y: auto;
+}
+.column__footer { padding: var(--space-2) var(--space-3) var(--space-3); }
+
+.column__add, .board-add-column {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: .85rem;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.column__add { width: 100%; padding: 6px 4px; }
+.column__add:hover { background: var(--surface-hover); color: var(--text); }
+.column__add svg, .board-add-column svg { width: 14px; height: 14px; }
+
+.board-add-column {
+  flex: none;
+  align-self: flex-start;
+  width: 220px;
+  padding: var(--space-3) var(--space-4);
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-md);
+}
+.board-add-column:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+/* Форма добавления карточки */
+.composer { display: flex; flex-direction: column; gap: var(--space-2); }
+
+/* ---------- Карточка ---------- */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--surface);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast), opacity var(--t-fast);
+}
+.card:hover { border-color: var(--accent-soft); box-shadow: var(--shadow-md); }
+.card.is-dragging { opacity: .35; cursor: grabbing; }
+
+.card__top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.card__labels { display: flex; flex-wrap: wrap; gap: 4px; min-width: 0; }
+.card__top .deadline-badge { margin-left: auto; flex: none; }
+.card__title { color: var(--text); font-size: .88rem; font-weight: 650; line-height: 1.35; word-break: break-word; }
+.card__title:hover { text-decoration: none; }
+.card__desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: .76rem;
+  line-height: 1.45;
+  word-break: break-word;
+}
+.card__meta { display: flex; align-items: center; gap: var(--space-3); margin-top: 2px; }
+.card__stat { display: inline-flex; align-items: center; gap: 4px; color: var(--text-muted); font-size: .75rem; font-weight: 500; }
+.card__stat svg { width: 13px; height: 13px; }
+.card__stat.is-done { color: var(--success); }
+.card__assignee { margin-left: auto; }
+
+/* ---------- Drag-and-drop ---------- */
+.card-placeholder {
+  flex: none;
+  height: var(--h, 48px);
+  border: 1.5px dashed var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  animation: slot-open var(--t-base) var(--ease);
+}
+@keyframes slot-open { from { height: 0; opacity: 0; } to { height: var(--h, 48px); opacity: 1; } }
+
+.card--landed { animation: landed 320ms var(--ease); }
+@keyframes landed {
+  from { transform: scale(.96); box-shadow: 0 0 0 3px var(--accent-soft); border-color: var(--accent); }
+  to   { transform: none; }
+}
+
+/* ---------- Участники (модалка) ---------- */
+.member-list { display: flex; flex-direction: column; gap: var(--space-2); }
+.member-row { display: flex; align-items: center; gap: var(--space-3); }
+.member-row .truncate { flex: 1; }
+.member-form { display: flex; flex-direction: column; gap: var(--space-3); padding-top: var(--space-4); border-top: 1px solid var(--border); }
+.member-form__emoji { width: 80px; text-align: center; }
+
+/* ---------- Адаптивность ---------- */
+@media (max-width: 900px) {
+  .board-head { padding: var(--space-3) var(--space-4); }
+  .board-columns { padding: var(--space-2) var(--space-4) 0; }
+  .board-scroll { scroll-padding-inline: var(--space-4); }
+}
+@media (max-width: 600px) {
+  .board-members__label { display: none; }
+  .board-filters .input { flex: 1 1 100%; margin-right: 0; width: auto; }
+  .board-filters [data-f="assignee"] { margin-left: 0; }
+  .column { flex: 0 0 84vw; max-width: none; }
+  .board-add-column { width: 84vw; }
+}

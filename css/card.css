@@ -1,0 +1,121 @@
+/* ==========================================================
+   card.css — модальное окно карточки
+   ========================================================== */
+
+.modal--card { max-width: 800px; }
+
+/* ---------- Шапка: название редактируется прямо на месте ---------- */
+.card-modal__head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5) 0;
+}
+.card-modal__titlewrap { flex: 1; min-width: 0; }
+.card-modal__title {
+  width: 100%;
+  padding: 4px 8px;
+  margin-left: -8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-size: 1.35rem;
+  font-weight: 650;
+  letter-spacing: -.01em;
+  transition: background var(--t-fast), border-color var(--t-fast);
+}
+.card-modal__title:hover { background: var(--surface-hover); }
+.card-modal__title:focus { outline: none; background: var(--surface); border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.card-modal__titlewrap > p { margin-top: 2px; }
+
+/* ---------- Тело: основная часть + боковая панель ---------- */
+.card-modal__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 250px;
+  gap: var(--space-5);
+  padding: var(--space-4) var(--space-5) var(--space-5);
+}
+.card-modal__main { display: flex; flex-direction: column; gap: var(--space-5); min-width: 0; }
+.card-modal__side { display: flex; flex-direction: column; gap: var(--space-4); }
+
+.cm-section { display: flex; flex-direction: column; gap: var(--space-2); }
+.cm-section h4 { font-size: .95rem; }
+
+/* ---------- Чек-лист ---------- */
+.progress { height: 6px; border-radius: var(--radius-full); background: var(--surface-2); overflow: hidden; }
+.progress > span { display: block; height: 100%; background: var(--accent); border-radius: inherit; transition: width var(--t-base) var(--ease); }
+
+.checklist { display: flex; flex-direction: column; }
+.check-row { display: flex; align-items: center; gap: var(--space-2); padding: 2px 0; }
+.check-row input[type="checkbox"] { width: 16px; height: 16px; flex: none; accent-color: var(--accent); }
+.check-row__text {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+}
+.check-row__text:hover { background: var(--surface-hover); }
+.check-row__text:focus { outline: none; background: var(--surface); border-color: var(--accent); }
+.check-row.is-done .check-row__text { color: var(--text-muted); text-decoration: line-through; }
+.check-row .btn { opacity: 0; transition: opacity var(--t-fast); }
+.check-row:hover .btn, .check-row:focus-within .btn { opacity: 1; }
+@media (hover: none) { .check-row .btn { opacity: 1; } }
+
+/* ---------- Комментарии ---------- */
+.comments { display: flex; flex-direction: column; gap: var(--space-3); }
+.comment { display: flex; gap: var(--space-3); }
+.comment__main { min-width: 0; }
+.comment__text { margin-top: 2px; white-space: pre-wrap; word-break: break-word; }
+.comment-form { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+.comment-form .textarea { min-height: 64px; }
+
+/* ---------- Боковая панель ---------- */
+.deadline-hint { display: flex; align-items: center; justify-content: space-between; min-height: 0; }
+.deadline-hint:empty { display: none; }
+.input.is-today   { border-color: var(--deadline-today);   background: var(--deadline-today-bg); }
+.input.is-soon    { border-color: var(--deadline-soon);    background: var(--deadline-soon-bg); }
+.input.is-overdue { border-color: var(--deadline-overdue); background: var(--deadline-overdue-bg); color: var(--deadline-overdue); }
+
+.card-labels { display: flex; flex-wrap: wrap; gap: 6px; }
+.card-labels:empty { display: none; }
+.chip__remove {
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  opacity: .75;
+}
+.chip__remove:hover { opacity: 1; }
+.chip__remove svg { width: 11px; height: 11px; }
+
+.label-form { display: flex; flex-direction: column; gap: var(--space-2); }
+.swatches { display: flex; gap: 6px; }
+.swatch {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius-full);
+  transition: transform var(--t-fast);
+}
+.swatch:hover { transform: scale(1.12); }
+.swatch[aria-pressed="true"] { border-color: var(--surface); box-shadow: 0 0 0 2px var(--text); }
+
+.card-modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+/* ---------- Адаптивность ---------- */
+@media (max-width: 720px) {
+  .card-modal__body { grid-template-columns: 1fr; }
+  .card-modal__head { padding: var(--space-3) var(--space-4) 0; }
+  .card-modal__body { padding: var(--space-3) var(--space-4) var(--space-4); }
+}

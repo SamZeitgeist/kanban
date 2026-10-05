@@ -1,0 +1,120 @@
+/* ==========================================================
+   boards.css — страница «Доски» (#/boards)
+   ========================================================== */
+
+.boards-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.boards-tools { display: flex; align-items: center; gap: var(--space-3); }
+.boards-search { width: 240px; }
+
+/* ---------- Сетка ---------- */
+.boards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-4);
+}
+.boards-empty { grid-column: 1 / -1; }
+.boards-empty p { max-width: 44ch; }
+
+/* ---------- Карточка доски ---------- */
+.board-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--t-fast), box-shadow var(--t-base);
+}
+.board-card:hover,
+.board-card:focus-within { border-color: var(--accent); box-shadow: var(--shadow-md); }
+
+.board-card__body { padding: var(--space-3) var(--space-4) var(--space-4); }
+.board-card__name { font-size: 1rem; }
+
+/* Вся карточка кликабельна: ссылка растягивается на весь блок */
+.board-card__link { color: var(--text); }
+.board-card__link:hover { text-decoration: none; }
+.board-card__link::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+.board-card__link:focus-visible { outline: none; }
+.board-card:has(.board-card__link:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Кнопка меню поверх растянутой ссылки */
+.board-card__menu {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  z-index: 2;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  opacity: 0;
+  transition: opacity var(--t-fast), background var(--t-fast);
+}
+.board-card:hover .board-card__menu,
+.board-card:focus-within .board-card__menu,
+.board-card__menu:focus-visible { opacity: 1; }
+/* На устройствах без hover кнопка видна всегда */
+@media (hover: none) { .board-card__menu { opacity: 1; } }
+
+/* ---------- Превью-схема колонок ---------- */
+.board-preview {
+  display: flex;
+  gap: 6px;
+  height: 112px;
+  padding: var(--space-3);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+.mini-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.mini-col__title {
+  display: block;
+  height: 5px;
+  margin-bottom: 2px;
+  border-radius: var(--radius-full);
+  background: hsl(var(--hue) 62% 58%);
+}
+.mini-card {
+  display: block;
+  height: 13px;
+  border-radius: 3px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---------- Плитка «создать» ---------- */
+.board-new {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 170px;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 550;
+  transition: border-color var(--t-fast), color var(--t-fast), background var(--t-fast);
+}
+.board-new svg { width: 18px; height: 18px; }
+.board-new:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+/* Иконка в кнопках заголовка */
+.boards-head .btn svg { width: 16px; height: 16px; }
+
+/* ---------- Адаптивность ---------- */
+@media (max-width: 600px) {
+  .boards-tools { width: 100%; flex-wrap: wrap; }
+  .boards-search { width: 100%; flex: 1 1 100%; }
+  .boards-tools .btn { width: 100%; }
+  .boards-grid { grid-template-columns: 1fr; }
+  .board-new { min-height: 72px; }
+}

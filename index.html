@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light" data-font="medium">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Канбан-доска</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗂️</text></svg>">
+
+  <!-- Применяем тему и размер шрифта ДО отрисовки, чтобы не было «мигания» -->
+  <script>
+    (function () {
+      var theme = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      var font = 'medium';
+      try {
+        // TODO: заменить на fetch('/api/profile') — но тему лучше оставить в localStorage для мгновенного старта
+        var state = JSON.parse(localStorage.getItem('kanban_state') || 'null');
+        if (state && state.profile && state.profile.settings) {
+          theme = state.profile.settings.theme || theme;
+          font = state.profile.settings.fontSize || font;
+        }
+      } catch (e) { /* повреждённые данные — используем значения по умолчанию */ }
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.dataset.font = font;
+    })();
+  </script>
+
+  <!-- Стили: общие + по страницам -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/boards.css">
+  <link rel="stylesheet" href="css/board.css">
+  <link rel="stylesheet" href="css/card.css">
+  <link rel="stylesheet" href="css/profile.css">
+</head>
+<body>
+
+  <div class="app-shell">
+    <!-- Боковая панель с иконками навигации -->
+    <nav class="sidebar" aria-label="Основная навигация">
+      <a class="sidebar__logo" href="#/boards" aria-label="К списку досок" title="К списку досок">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="3" y="3" width="5" height="18" rx="1.5" fill="currentColor"/>
+          <rect x="10" y="3" width="5" height="11" rx="1.5" fill="currentColor" opacity=".75"/>
+          <rect x="17" y="3" width="4" height="14" rx="1.5" fill="currentColor" opacity=".5"/>
+        </svg>
+      </a>
+      <a class="sidebar__link" href="#/boards" data-nav="boards" aria-label="Доски" title="Доски">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M9 4v16M15 4v16"/></svg>
+      </a>
+      <a class="sidebar__link" href="#/profile" data-nav="profile" aria-label="Профиль" title="Профиль">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.7"/><path d="M4.5 20c.9-3.6 3.9-5.5 7.5-5.5s6.6 1.9 7.5 5.5"/></svg>
+      </a>
+    </nav>
+
+    <div class="app-content">
+      <!-- Верхняя панель -->
+      <header class="app-header" id="app-header">
+        <a class="app-logo" href="#/boards">Канбан</a>
+        <!-- Мини-аватар профиля; содержимое заполняет app.js -->
+        <a class="header-profile" id="header-profile" href="#/profile" aria-label="Профиль"></a>
+      </header>
+
+      <!-- Контейнеры страниц: app.js показывает нужный, остальные скрывает -->
+      <main class="app-main" id="app">
+        <section class="page" id="page-boards" hidden></section>
+        <section class="page page--board" id="page-board" hidden></section>
+        <section class="page" id="page-profile" hidden></section>
+        <section class="page" id="page-not-found" hidden>
+          <div class="empty-state">
+            <div class="empty-state__icon">🧭</div>
+            <h2>Страница не найдена</h2>
+            <p>Такого адреса нет. Вернитесь к списку досок.</p>
+            <a class="btn btn--primary" href="#/boards">К доскам</a>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Корень для модальных окон (карточка, подтверждения) -->
+  <div id="modal-root"></div>
+
+  <!-- Контейнер для toast-уведомлений -->
+  <div id="toasts" role="status" aria-live="polite"></div>
+
+  <noscript>Для работы приложения нужен включённый JavaScript.</noscript>
+
+  <!--
+    Порядок важен: сначала данные, потом страницы, в конце — роутер.
+    Обычные <script> (не type="module"), чтобы всё работало при открытии index.html двойным кликом (file://).
+  -->
+  <script src="js/i18n.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/boards.js"></script>
+  <script src="js/board.js"></script>
+  <script src="js/card.js"></script>
+  <script src="js/profile.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

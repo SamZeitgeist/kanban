@@ -1,0 +1,78 @@
+/* ==========================================================
+   profile.css — страница «Профиль» (#/profile)
+   ========================================================== */
+
+.profile { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--space-5); }
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+/* ---------- Аватар ---------- */
+.profile-avatar { display: flex; align-items: center; gap: var(--space-5); }
+.profile-avatar__actions { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.profile-avatar .avatar { font-size: 2.4rem; }
+
+.profile-form { display: flex; flex-direction: column; gap: var(--space-4); }
+
+/* ---------- Настройки ---------- */
+.setting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+.setting:first-of-type { padding-top: 0; border-top: 0; }
+.setting__select { width: auto; min-width: 140px; }
+
+/* Переключатель из радиокнопок */
+.segmented {
+  display: inline-flex;
+  flex: none;
+  padding: 3px;
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+}
+.segmented label { position: relative; cursor: pointer; }
+.segmented input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.segmented span {
+  display: block;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: .88rem;
+  font-weight: 550;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.segmented label:hover span { color: var(--text); }
+.segmented input:checked + span { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm); }
+.segmented input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* ---------- Статистика ---------- */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-3); }
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+}
+.stat__num { font-size: 1.6rem; font-weight: 700; line-height: 1.2; letter-spacing: -.02em; }
+.stat__label { color: var(--text-muted); font-size: .85rem; }
+
+/* ---------- Адаптивность ---------- */
+@media (max-width: 600px) {
+  .profile-section { padding: var(--space-4); }
+  .profile-avatar { flex-direction: column; align-items: flex-start; }
+  .setting { flex-direction: column; align-items: flex-start; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+}
