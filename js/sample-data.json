@@ -1,0 +1,169 @@
+{
+  "version": 1,
+  "profile": {
+    "name": "Демо-пользователь",
+    "email": "demo@example.com",
+    "bio": "Тестовые данные для проверки канбан-доски",
+    "avatar": null,
+    "settings": { "theme": "light", "fontSize": "medium", "language": "ru" }
+  },
+  "boards": [
+    {
+      "id": "board-demo-1",
+      "name": "Запуск сайта",
+      "createdAt": 1790300000000,
+      "members": [
+        { "id": "m-anna", "name": "Анна", "avatar": "🦊", "color": "#4f5bd5" },
+        { "id": "m-igor", "name": "Игорь", "avatar": "🐼", "color": "#16a085" },
+        { "id": "m-maria", "name": "Мария", "avatar": null, "color": "#d6336c" }
+      ],
+      "columns": [
+        {
+          "id": "col-todo",
+          "name": "To Do",
+          "wipLimit": null,
+          "cards": [
+            {
+              "id": "card-1",
+              "title": "Подготовить тексты для главной страницы",
+              "description": "Заголовок, три преимущества и призыв к действию. Согласовать с маркетингом.",
+              "assigneeId": "m-maria",
+              "deadline": "2026-10-20",
+              "labels": [{ "text": "Контент", "color": "#7048e8" }],
+              "checklist": [
+                { "text": "Заголовок", "done": false },
+                { "text": "Преимущества", "done": false },
+                { "text": "Призыв к действию", "done": false }
+              ],
+              "comments": [],
+              "createdAt": 1790310000000, "updatedAt": 1790310000000, "archived": false
+            },
+            {
+              "id": "card-2",
+              "title": "Настроить аналитику",
+              "description": "",
+              "assigneeId": "m-igor",
+              "deadline": "2026-10-04",
+              "labels": [{ "text": "Срочно", "color": "#e5484d" }, { "text": "Техника", "color": "#1c7ed6" }],
+              "checklist": [],
+              "comments": [{ "author": "Анна", "text": "Нужны цели и события для воронки.", "date": 1790800000000 }],
+              "createdAt": 1790320000000, "updatedAt": 1790800000000, "archived": false
+            },
+            {
+              "id": "card-3",
+              "title": "Выбрать домен",
+              "description": "",
+              "assigneeId": null,
+              "deadline": null,
+              "labels": [],
+              "checklist": [],
+              "comments": [],
+              "createdAt": 1790330000000, "updatedAt": 1790330000000, "archived": false
+            }
+          ]
+        },
+        {
+          "id": "col-progress",
+          "name": "In Progress",
+          "wipLimit": 3,
+          "cards": [
+            {
+              "id": "card-4",
+              "title": "Вёрстка страницы тарифов",
+              "description": "Три тарифа, переключатель «месяц / год», адаптив под мобильные.",
+              "assigneeId": "m-anna",
+              "deadline": "2026-10-02",
+              "labels": [{ "text": "Вёрстка", "color": "#f08c00" }],
+              "checklist": [
+                { "text": "Макет десктоп", "done": true },
+                { "text": "Макет мобильный", "done": true },
+                { "text": "Переключатель периода", "done": false },
+                { "text": "Проверка в браузерах", "done": false }
+              ],
+              "comments": [
+                { "author": "Игорь", "text": "Цены возьми из таблицы в документе.", "date": 1790700000000 },
+                { "author": "Анна", "text": "Спасибо, уже подставила.", "date": 1790750000000 }
+              ],
+              "createdAt": 1790340000000, "updatedAt": 1790750000000, "archived": false
+            },
+            {
+              "id": "card-5",
+              "title": "Форма обратной связи",
+              "description": "Валидация полей и отправка на почту.",
+              "assigneeId": "m-igor",
+              "deadline": "2026-09-28",
+              "labels": [{ "text": "Срочно", "color": "#e5484d" }],
+              "checklist": [
+                { "text": "Валидация", "done": true },
+                { "text": "Отправка письма", "done": false }
+              ],
+              "comments": [],
+              "createdAt": 1790350000000, "updatedAt": 1790600000000, "archived": false
+            }
+          ]
+        },
+        {
+          "id": "col-review",
+          "name": "Review",
+          "wipLimit": null,
+          "cards": [
+            {
+              "id": "card-6",
+              "title": "Страница «О компании»",
+              "description": "Проверить тексты и фотографии команды.",
+              "assigneeId": "m-maria",
+              "deadline": "2026-10-03",
+              "labels": [{ "text": "Контент", "color": "#7048e8" }],
+              "checklist": [],
+              "comments": [],
+              "createdAt": 1790360000000, "updatedAt": 1790360000000, "archived": false
+            }
+          ]
+        },
+        {
+          "id": "col-done",
+          "name": "Done",
+          "wipLimit": null,
+          "cards": [
+            {
+              "id": "card-7",
+              "title": "Утвердить дизайн-систему",
+              "description": "",
+              "assigneeId": "m-anna",
+              "deadline": null,
+              "labels": [{ "text": "Дизайн", "color": "#2f9e44" }],
+              "checklist": [
+                { "text": "Цвета", "done": true },
+                { "text": "Типографика", "done": true }
+              ],
+              "comments": [],
+              "createdAt": 1790370000000, "updatedAt": 1790500000000, "archived": false
+            },
+            {
+              "id": "card-8",
+              "title": "Купить хостинг",
+              "description": "",
+              "assigneeId": "m-igor",
+              "deadline": null,
+              "labels": [{ "text": "Техника", "color": "#1c7ed6" }],
+              "checklist": [],
+              "comments": [],
+              "createdAt": 1790380000000, "updatedAt": 1790450000000, "archived": false
+            },
+            {
+              "id": "card-9",
+              "title": "Старый вариант логотипа",
+              "description": "Архивная карточка: не показывается на доске, учитывается в статистике.",
+              "assigneeId": null,
+              "deadline": null,
+              "labels": [],
+              "checklist": [],
+              "comments": [],
+              "createdAt": 1790390000000, "updatedAt": 1790400000000, "archived": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
