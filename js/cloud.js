@@ -6,10 +6,10 @@
 
 // ↓↓↓ Вставьте СВОИ значения из Firebase: Project settings → Your apps → SDK setup and configuration ↓↓↓
 const FIREBASE_CONFIG = {
-  apiKey: 'ВАШ_API_KEY',
-  authDomain: 'ВАШ_ПРОЕКТ.firebaseapp.com',
-  projectId: 'ВАШ_ПРОЕКТ',
-  appId: 'ВАШ_APP_ID'
+  apiKey: 'AIzaSyD7Ju9HzHuWZuWQ2555Nl8BrJMtrd_sEd0',
+  authDomain: 'kanban-fec96.firebaseapp.com',
+  projectId: 'kanban-fec96',
+  appId: '1:364361969024:web:bb1470df454c91338b6565'
 };
 // ↑↑↑ Менять нужно только значения в кавычках. Запятые и скобки оставьте как есть ↑↑↑
 
