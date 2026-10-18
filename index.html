@@ -94,31 +94,5 @@
   <script src="js/pages.js"></script>
   <script src="js/sidebar.js"></script>
   <script src="js/app.js"></script>
-  <!-- Загрузка библиотеки Google -->
-<script src="https://accounts.google.com/gsi/client" async></script>
-
-<!-- Контейнер для автоматического отображения кнопки Google -->
-<div id="g_id_onload"
-     data-client_id="{"web":{
-  "client_id":"61136605238-kr9hu81fhq7f51fbbqgjkng33hssoei7.apps.googleusercontent.com",
-  "project_id":"kanban-512009","auth_uri":"https://accounts.google.com/o/oauth2/auth",
-  "token_uri":"https://oauth2.googleapis.com/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
-  "client_secret":"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",
-  "javascript_origins":["https://samzeitgeist.github.io"]}}"
-     data-callback="handleCredentialResponse"
-     data-auto_prompt="false">
-</div>
-<div class="g_id_signin" data-type="standard"></div>
-
-<script>
-  // Эта функция вызывается после успешного входа пользователя
-  function handleCredentialResponse(response) {
-    // response.credential — это JWT-токен
-    console.log("Encoded JWT ID token: " + response.credential);
-    
-    // В реальном проекте здесь нужно отправить токен на ваш бэкенд для проверки
-    // и создания сессии/аккаунта
-  }
-</script>
 </body>
 </html>
