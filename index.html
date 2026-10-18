@@ -85,12 +85,13 @@
     Порядок важен: сначала данные, потом страницы, в конце — роутер.
     Обычные <script> (не type="module"), чтобы всё работало при открытии index.html двойным кликом (file://).
   -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="js/cloud.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/storage.js"></script>
+  <!-- Firebase (вход и синхронизация) — строго между storage.js и boards.js -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/cloud.js"></script>
   <script src="js/boards.js"></script>
   <script src="js/board.js"></script>
   <script src="js/card.js"></script>
