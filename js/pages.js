@@ -6,7 +6,7 @@
    ========================================================== */
 const Pages = (() => {
   const esc = (s) => UI.escapeHTML(s);
-  const SUPPORT_EMAIL = 'support@example.com'; // ← укажите свой адрес поддержки
+  const WEB3FORMS_KEY = 'd2106abc-b98d-4165-8742-dde19a408e56'; // ← Access Key с web3forms.com (письма приходят на почту, указанную при получении ключа)
   const wsName = () => Store.WORKSPACES.find((w) => w.id === Store.getWorkspace()).name;
   const head = (title, sub = '', actions = '') => `
     <div class="view-head"><div><h1>${title}</h1>${sub ? `<p class="text-muted">${sub}</p>` : ''}</div>${actions ? `<div class="row row--wrap">${actions}</div>` : ''}</div>`;
@@ -265,14 +265,39 @@ const Pages = (() => {
         <form class="support-form" data-support>
           <div class="field"><label for="sp-subj">Тема</label><input class="input" id="sp-subj" name="subject" maxlength="120" required placeholder="Коротко о проблеме"></div>
           <div class="field"><label for="sp-msg">Сообщение</label><textarea class="textarea" id="sp-msg" name="message" rows="5" required placeholder="Что произошло и что вы ожидали увидеть"></textarea></div>
-          <div><button type="submit" class="btn btn--primary">Открыть письмо</button></div>
+          <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off">
+          <div><button type="submit" class="btn btn--primary">Отправить</button></div>
         </form></section>
     </div>`;
-    el.querySelector('[data-support]').onsubmit = (e) => {
+    el.querySelector('[data-support]').onsubmit = async (e) => {
       e.preventDefault();
-      const f = e.target, p = Store.getProfile();
-      const body = f.message.value + '\n\n— ' + p.name + (p.email ? ' <' + p.email + '>' : '');
-      location.href = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(f.subject.value)}&body=${encodeURIComponent(body)}`;
+      const f = e.target, p = Store.getProfile(), btn = f.querySelector('button[type="submit"]');
+      if (!WEB3FORMS_KEY || WEB3FORMS_KEY === 'ВАШ_ACCESS_KEY') { UI.toast('Укажите WEB3FORMS_KEY в js/pages.js', 'error', 6000); return; }
+      btn.disabled = true;
+      try {
+        const payload = {
+          access_key: WEB3FORMS_KEY,
+          from_name: 'Канбан: поддержка',
+          subject: f.subject.value.trim(),
+          message: f.message.value.trim(),
+          name: p.name,
+          botcheck: f.botcheck.checked
+        };
+        if (p.email) payload.email = p.email;
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || 'Ошибка отправки');
+        UI.toast('Сообщение отправлено. Спасибо!', 'success');
+        f.reset();
+      } catch (err) {
+        UI.toast('Не удалось отправить: ' + err.message, 'error', 6000);
+      } finally {
+        btn.disabled = false;
+      }
     };
   }
 
