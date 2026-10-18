@@ -15,7 +15,7 @@
    ========================================================== */
 const AUTH_CONFIG = {
   redirectUri: location.origin + location.pathname,
-  google: { clientId: 'YOUR_GOOGLE_CLIENT_ID' },
+  google: { clientId: '61136605238-51vf8b7bkr9qhmhbguimkk2omeji21ec.apps.googleusercontent.com' },
   github: { clientId: 'YOUR_GITHUB_CLIENT_ID', tokenProxy: '' }
 };
 const AUTH_NAMES = { google: 'Google', github: 'GitHub' };
