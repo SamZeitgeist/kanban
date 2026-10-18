@@ -1,8 +1,8 @@
 // js/cloud.js
 firebase.initializeApp({            // значения из Project settings → Your apps → Web
-  apiKey: '...', authDomain: 'ПРОЕКТ.firebaseapp.com', projectId: 'ПРОЕКТ', appId: '...'
+  apiKey: 'AIzaSyD7Ju9HzHuWZuWQ2555Nl8BrJMtrd_sEd0', authDomain: 'kanban-fec96.firebaseapp.com', projectId: 'kanban-fec96', appId: '1:364361969024:web:bb1470df454c91338b6565'
 });
-const auth = firebase.auth(), db = firebase.firestore();
+const auth = firebay: 'AIzaSyD7Ju9HzHuWZuWQ2555Nl8BrJMtrd_sEd0', authDomase.auth(), db = firebase.firestore();
 
 const Cloud = (() => {
   let uid = null, timer = null;
