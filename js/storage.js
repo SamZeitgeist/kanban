@@ -58,6 +58,8 @@ const Store = (() => {
       team: Array.isArray(raw.team) ? raw.team : [],
       departments: Array.isArray(raw.departments) ? raw.departments : base.departments,
       notifications: Array.isArray(raw.notifications) ? raw.notifications : []
+             notifications: Array.isArray(raw.notifications) ? raw.notifications : [],
+      updatedAt: raw.updatedAt || 0
     };
     if (!WORKSPACES.some((w) => w.id === s.ui.workspace)) s.ui.workspace = 'personal';
     s.boards.forEach((b) => {
@@ -92,14 +94,15 @@ const Store = (() => {
   }
 
   function saveState() {
+    state.updatedAt = Date.now();                       // метка времени для синхронизации
     try {
-      // TODO: заменить на fetch('/api/state', { method: 'PUT', body: JSON.stringify(state) })
       localStorage.setItem(KEY, JSON.stringify(state));
     } catch (e) {
       errorHandler('Не удалось сохранить данные: хранилище браузера переполнено');
       return false;
     }
     listeners.forEach((fn) => fn(state));
+    if (typeof Cloud !== 'undefined') Cloud.push();     // отправка в облако
     return true;
   }
 
@@ -487,6 +490,11 @@ const Store = (() => {
   function onChange(fn) { listeners.add(fn); return () => listeners.delete(fn); }
   function setErrorHandler(fn) { errorHandler = fn; }
 
+   const getRaw = () => ({ ...state, updatedAt: state.updatedAt || 0 });
+function setRaw(raw) { 
+   state = normalize(raw); 
+   localStorage.setItem(KEY, JSON.stringify(state)); 
+   listeners.forEach((fn) => fn(state)); }
   return {
     loadState, saveState, resetState, exportJSON, importJSON, onChange, setErrorHandler,
     getProfile, updateProfile,
