@@ -68,28 +68,3 @@ const Cloud = (() => {
 
   return { loginGoogle, loginGithub, logout, push, pull };
 })();
-  }
-
-  // Загрузка из облака: побеждает более свежая версия
-  async function pull() {
-    try {
-      const snap = await ref().get();
-      const localAt = Store.getRaw().updatedAt || 0;
-      if (snap.exists && snap.data().updatedAt > localAt) {
-        Store.setRaw(JSON.parse(snap.data().state));   // облако новее → заменяем локальные данные
-        App.refresh();
-      } else {
-        push();                                         // локальные новее или в облаке пусто → отправляем
-      }
-    } catch (e) {
-      UI.toast('Не удалось загрузить данные из облака: ' + e.message, 'error');
-    }
-  }
-
-  fbAuth.onAuthStateChanged((user) => {
-    uid = user ? user.uid : null;
-    if (user) pull();
-  });
-
-  return { loginGoogle, loginGithub, logout, push, pull };
-})();
