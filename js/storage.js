@@ -57,8 +57,7 @@ const Store = (() => {
       ui: { ...base.ui, ...(raw.ui || {}) },
       team: Array.isArray(raw.team) ? raw.team : [],
       departments: Array.isArray(raw.departments) ? raw.departments : base.departments,
-      notifications: Array.isArray(raw.notifications) ? raw.notifications : []
-             notifications: Array.isArray(raw.notifications) ? raw.notifications : [],
+      notifications: Array.isArray(raw.notifications) ? raw.notifications : [],
       updatedAt: raw.updatedAt || 0
     };
     if (!WORKSPACES.some((w) => w.id === s.ui.workspace)) s.ui.workspace = 'personal';
@@ -490,12 +489,16 @@ const Store = (() => {
   function onChange(fn) { listeners.add(fn); return () => listeners.delete(fn); }
   function setErrorHandler(fn) { errorHandler = fn; }
 
-   const getRaw = () => ({ ...state, updatedAt: state.updatedAt || 0 });
-function setRaw(raw) { 
-   state = normalize(raw); 
-   localStorage.setItem(KEY, JSON.stringify(state)); 
-   listeners.forEach((fn) => fn(state)); }
+  /* ---------- Облачная синхронизация (js/cloud.js) ---------- */
+  const getRaw = () => state;
+  function setRaw(raw) {
+    state = normalize(raw);
+    localStorage.setItem(KEY, JSON.stringify(state));   // без saveState — чтобы не отправлять обратно в облако
+    listeners.forEach((fn) => fn(state));
+  }
+
   return {
+    getRaw, setRaw,
     loadState, saveState, resetState, exportJSON, importJSON, onChange, setErrorHandler,
     getProfile, updateProfile,
     getBoards, getBoard, createBoard, renameBoard, deleteBoard, duplicateBoard,
