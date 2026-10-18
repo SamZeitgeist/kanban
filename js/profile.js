@@ -16,7 +16,7 @@
 const AUTH_CONFIG = {
   redirectUri: location.origin + location.pathname,
   google: { clientId: '61136605238-51vf8b7bkr9qhmhbguimkk2omeji21ec.apps.googleusercontent.com' },
-  github: { clientId: 'YOUR_GITHUB_CLIENT_ID', tokenProxy: '' }
+  github: { clientId: 'Ov23li0D4ThQNTVwcXBk', tokenProxy: 'https://kanban-oauth.vs1565733.workers.dev' }
 };
 const AUTH_NAMES = { google: 'Google', github: 'GitHub' };
 
