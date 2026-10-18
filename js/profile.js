@@ -19,10 +19,10 @@ const AUTH_CONFIG = {
   github: { clientId: 'Ov23li0D4ThQNTVwcXBk', tokenProxy: 'https://kanban-oauth.vs1565733.workers.dev' }
 };
 const AUTH_NAMES = { google: 'Google', github: 'GitHub' };
- 
+
 const Auth = (() => {
   const KEY = 'kanban_oauth_state';
- 
+
   function begin(provider) {
     const cfg = AUTH_CONFIG[provider];
     if (!cfg.clientId) { UI.toast(`Укажите AUTH_CONFIG.${provider}.clientId в js/profile.js`, 'error', 6000); return; }
@@ -35,7 +35,7 @@ const Auth = (() => {
       : { client_id: cfg.clientId, redirect_uri: AUTH_CONFIG.redirectUri, scope: 'read:user user:email', state };
     location.href = (google ? 'https://accounts.google.com/o/oauth2/v2/auth?' : 'https://github.com/login/oauth/authorize?') + new URLSearchParams(params);
   }
- 
+
   function connect(provider, info) {
     const p = Store.getProfile();
     Store.updateProfile({
@@ -46,12 +46,13 @@ const Auth = (() => {
     Store.notify('Вход через ' + AUTH_NAMES[provider] + ': ' + (info.email || info.login || ''), 'auth');
     UI.toast('Вы вошли через ' + AUTH_NAMES[provider], 'success');
   }
- 
+
   function logout() {
+    if (typeof Cloud !== 'undefined') Cloud.logout();
     Store.updateProfile({ auth: null });
     UI.toast('Вы вышли из аккаунта');
   }
- 
+
   // Вызывается при старте ДО роутера: забираем параметры из URL и сразу чистим адрес
   function finishFromUrl() {
     const hash = new URLSearchParams(location.hash.replace(/^#\/?/, ''));
@@ -63,7 +64,7 @@ const Auth = (() => {
     sessionStorage.removeItem(KEY);
     history.replaceState(null, '', location.pathname + '#/profile');
     if (!provider || state !== saved) { UI.toast('Не удалось подтвердить вход: неверный state', 'error'); return; }
- 
+
     if (provider === 'google' && token) {
       fetch('https://www.googleapis.com/oauth2/v3/userinfo', { headers: { Authorization: 'Bearer ' + token } })
         .then((r) => r.ok ? r.json() : Promise.reject())
@@ -78,10 +79,10 @@ const Auth = (() => {
         .catch(() => UI.toast('Не удалось войти через GitHub', 'error'));
     }
   }
- 
+
   return { begin, connect, logout, finishFromUrl };
 })();
- 
+
 // Хуки для кнопок: вход через Firebase (js/cloud.js)
 function handleGoogleLogin() {
   Cloud.loginGoogle()
@@ -97,24 +98,24 @@ function handleGithubLogin() {
     })
     .catch((e) => UI.toast('Не удалось войти через GitHub: ' + e.code, 'error', 6000));
 }
- 
+
 const ProfilePage = (() => {
   const esc = (s) => UI.escapeHTML(s); // UI определяется в app.js (грузится последним), поэтому вызываем лениво
- 
+
   const radios = (name, current, options) =>
     `<div class="segmented" role="radiogroup">${options.map(([value, text]) =>
       `<label><input type="radio" name="${name}" value="${value}"${value === current ? ' checked' : ''}><span>${text}</span></label>`).join('')}</div>`;
- 
+
   // mode: 'profile' — личные данные, вход, статистика; 'settings' — настройки и данные
   function render(el, mode = 'profile') {
     const p = Store.getProfile();
     const s = p.settings;
     const st = Store.getStats();
- 
+
     el.innerHTML = `
       <div class="profile">
         <h1>${mode === 'settings' ? 'Настройки' : 'Профиль'}</h1>
- 
+
         <section class="profile-section" data-section="personal">
           <h2>Личные данные</h2>
           <div class="profile-avatar">
@@ -138,7 +139,7 @@ const ProfilePage = (() => {
             <div><button type="submit" class="btn btn--primary">Сохранить</button></div>
           </form>
         </section>
- 
+
         <section class="profile-section" data-section="auth">
           <h2>Вход и аккаунты</h2>
           ${p.auth
@@ -149,7 +150,7 @@ const ProfilePage = (() => {
             <button type="button" class="btn-oauth btn-oauth--github" data-login="github">${UI.icons.github}<span>Войти через GitHub</span></button>
           </div>
         </section>
- 
+
         <section class="profile-section" data-section="settings">
           <h2>Настройки</h2>
           <div class="setting">
@@ -168,7 +169,7 @@ const ProfilePage = (() => {
             </select>
           </div>
         </section>
- 
+
         <section class="profile-section" data-section="stats">
           <h2>Статистика</h2>
           <div class="stats">
@@ -179,7 +180,7 @@ const ProfilePage = (() => {
           </div>
           <p class="text-muted text-sm">Выполненными считаются карточки в последней колонке доски.</p>
         </section>
- 
+
         <section class="profile-section" data-section="data">
           <h2>Данные</h2>
           <p class="text-muted text-sm">Экспорт сохраняет доски, профиль и настройки в JSON-файл. Импорт полностью заменяет текущие данные.</p>
@@ -191,13 +192,13 @@ const ProfilePage = (() => {
           </div>
         </section>
       </div>`;
- 
+
     // Оставляем только секции нужной страницы
     const keep = mode === 'settings' ? ['settings', 'data'] : ['personal', 'auth', 'stats'];
     el.querySelectorAll('[data-section]').forEach((sec) => { if (!keep.includes(sec.dataset.section)) sec.remove(); });
- 
+
     const wrap = el.querySelector('.profile');
- 
+
     /* ---------- Клики ---------- */
     wrap.addEventListener('click', async (e) => {
       const t = e.target;
@@ -205,7 +206,7 @@ const ProfilePage = (() => {
       if (login) { login.dataset.login === 'google' ? handleGoogleLogin() : handleGithubLogin(); return; }
       if (t.closest('[data-logout]')) { Auth.logout(); render(el, mode); return; }
       if (t.closest('[data-avatar-pick]')) { wrap.querySelector('[data-avatar-file]').click(); return; }
- 
+
       if (t.closest('[data-avatar-remove]')) {
         Store.updateProfile({ avatar: null });
         UI.toast('Фото удалено');
@@ -214,7 +215,7 @@ const ProfilePage = (() => {
       }
       if (t.closest('[data-export]')) { Store.exportJSON(); UI.toast('Файл с данными сохранён', 'success'); return; }
       if (t.closest('[data-import-pick]')) { wrap.querySelector('[data-import-file]').click(); return; }
- 
+
       if (t.closest('[data-reset]')) {
         const ok = await UI.confirmDialog({
           title: 'Очистить все данные?',
@@ -227,11 +228,11 @@ const ProfilePage = (() => {
         render(el, mode);
       }
     });
- 
+
     /* ---------- Изменения: файлы и настройки ---------- */
     wrap.addEventListener('change', async (e) => {
       const t = e.target;
- 
+
       if (t.matches('[data-avatar-file]')) {
         const file = t.files[0];
         t.value = '';
@@ -243,7 +244,7 @@ const ProfilePage = (() => {
         } catch (err) { UI.toast(err.message, 'error'); }
         return;
       }
- 
+
       if (t.matches('[data-import-file]')) {
         const file = t.files[0];
         t.value = '';
@@ -261,14 +262,14 @@ const ProfilePage = (() => {
         } catch (err) { UI.toast(err.message, 'error', 5000); }
         return;
       }
- 
+
       // Настройки применяются сразу
       if (t.name === 'theme' || t.name === 'fontSize' || t.name === 'language') {
         Store.updateProfile({ settings: { [t.name]: t.value } });
         UI.toast('Настройки сохранены');
       }
     });
- 
+
     /* ---------- Форма профиля ---------- */
     wrap.querySelector('[data-profile-form]')?.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -278,6 +279,6 @@ const ProfilePage = (() => {
       render(el, mode);
     });
   }
- 
+
   return { render };
 })();
