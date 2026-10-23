@@ -37,7 +37,7 @@
 .check-inline input { accent-color: var(--accent); }
 
 /* Архив */
-.archive-actions { position: relative; z-index: 2; display: flex; gap: var(--space-2); padding: 0 var(--space-4) var(--space-4); }
+.archive-actions { position: relative; z-index: 2; display: flex; gap: var(--space-2); padding: 0 var(--space-4) var(--space-4); } /* выше растянутой ссылки карточки (z-index: 1) */
 .archive-actions .btn svg { width: 14px; height: 14px; }
 
 /* Команда */
@@ -62,7 +62,7 @@
 .faq[open] summary::after { transform: rotate(45deg); }
 .faq summary:hover { color: var(--accent); }
 .faq p { padding: 0 4px 14px; }
-.support-form { display: flex; flex-direction: column; gap: var(--space-4); max-width: 640px; }
+.support-frame { width: 100%; min-height: 680px; border: 0; border-radius: var(--radius-md); background: #fff; } /* белый фон: форма Яндекса светлая */
 
 @media (max-width: 900px) { .view-cols { grid-template-columns: 1fr; } }
 @media (max-width: 600px) {
