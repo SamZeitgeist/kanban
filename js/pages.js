@@ -7,7 +7,7 @@
 const Pages = (() => {
   const esc = (s) => UI.escapeHTML(s);
   // Адрес веб-приложения Google Apps Script (см. support-script.gs): Развернуть → Веб-приложение → скопировать URL
-  const SUPPORT_ENDPOINT = 'https://script.google.com/macros/s/ВАШ_ID/exec';
+  const SUPPORT_ENDPOINT = 'https://docs.google.com/spreadsheets/d/1Vm4gO4Ha9JESNipeYyDFGBQtiFS1BOyK/edit?gid=1694288955#gid=1694288955';
   const wsName = () => Store.WORKSPACES.find((w) => w.id === Store.getWorkspace()).name;
   const head = (title, sub = '', actions = '') => `
     <div class="view-head"><div><h1>${title}</h1>${sub ? `<p class="text-muted">${sub}</p>` : ''}</div>${actions ? `<div class="row row--wrap">${actions}</div>` : ''}</div>`;
