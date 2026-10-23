@@ -6,7 +6,8 @@
    ========================================================== */
 const Pages = (() => {
   const esc = (s) => UI.escapeHTML(s);
-  const WEB3FORMS_KEY = 'd2106abc-b98d-4165-8742-dde19a408e56'; // ← Access Key с web3forms.com (письма приходят на почту, указанную при получении ключа)
+  // Адрес веб-приложения Google Apps Script (см. support-script.gs): Развернуть → Веб-приложение → скопировать URL
+  const SUPPORT_ENDPOINT = 'https://script.google.com/macros/s/ВАШ_ID/exec';
   const wsName = () => Store.WORKSPACES.find((w) => w.id === Store.getWorkspace()).name;
   const head = (title, sub = '', actions = '') => `
     <div class="view-head"><div><h1>${title}</h1>${sub ? `<p class="text-muted">${sub}</p>` : ''}</div>${actions ? `<div class="row row--wrap">${actions}</div>` : ''}</div>`;
@@ -265,39 +266,27 @@ const Pages = (() => {
         <form class="support-form" data-support>
           <div class="field"><label for="sp-subj">Тема</label><input class="input" id="sp-subj" name="subject" maxlength="120" required placeholder="Коротко о проблеме"></div>
           <div class="field"><label for="sp-msg">Сообщение</label><textarea class="textarea" id="sp-msg" name="message" rows="5" required placeholder="Что произошло и что вы ожидали увидеть"></textarea></div>
-          <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off">
           <div><button type="submit" class="btn btn--primary">Отправить</button></div>
         </form></section>
     </div>`;
+    // Отправка в Google Таблицу (no-cors: ответ Google недоступен, ошибка видна только при отсутствии сети)
     el.querySelector('[data-support]').onsubmit = async (e) => {
       e.preventDefault();
-      const f = e.target, p = Store.getProfile(), btn = f.querySelector('button[type="submit"]');
-      if (!WEB3FORMS_KEY || WEB3FORMS_KEY === 'ВАШ_ACCESS_KEY') { UI.toast('Укажите WEB3FORMS_KEY в js/pages.js', 'error', 6000); return; }
+      const f = e.target, p = Store.getProfile(), btn = f.querySelector('[type="submit"]');
+      if (SUPPORT_ENDPOINT.includes('ВАШ_ID')) { UI.toast('Укажите SUPPORT_ENDPOINT в js/pages.js', 'error', 6000); return; }
       btn.disabled = true;
       try {
-        const payload = {
-          access_key: WEB3FORMS_KEY,
-          from_name: 'Канбан: поддержка',
-          subject: f.subject.value.trim(),
-          message: f.message.value.trim(),
-          name: p.name,
-          botcheck: f.botcheck.checked
-        };
-        if (p.email) payload.email = p.email;
-        const res = await fetch('https://api.web3forms.com/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify(payload)
+        await fetch(SUPPORT_ENDPOINT, {
+          method: 'POST', mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ name: p.name, email: p.email, subject: f.subject.value, message: f.message.value, page: location.href })
         });
-        const data = await res.json();
-        if (!data.success) throw new Error(data.message || 'Ошибка отправки');
-        UI.toast('Сообщение отправлено. Спасибо!', 'success');
         f.reset();
+        UI.toast('Сообщение отправлено, спасибо!', 'success');
       } catch (err) {
-        UI.toast('Не удалось отправить: ' + err.message, 'error', 6000);
-      } finally {
-        btn.disabled = false;
+        UI.toast('Не удалось отправить, проверьте соединение', 'error');
       }
+      btn.disabled = false;
     };
   }
 
