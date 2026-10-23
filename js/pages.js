@@ -6,9 +6,10 @@
    ========================================================== */
 const Pages = (() => {
   const esc = (s) => UI.escapeHTML(s);
-  // Адрес Google Apps Script берётся из js/config.js (APP_CONFIG.SUPPORT_ENDPOINT)
-  const endpoint = () => (window.APP_CONFIG && window.APP_CONFIG.SUPPORT_ENDPOINT) || '';
-  const endpointOk = (u) => u.startsWith('https://script.google.com/macros/s/') && u.endsWith('/exec');
+  // Ссылка на Яндекс Форму берётся из js/config.js (APP_CONFIG.SUPPORT_FORM_URL)
+  const formUrl = () => (window.APP_CONFIG && window.APP_CONFIG.SUPPORT_FORM_URL) || '';
+  const formOk = (u) => /^https:\/\/forms\.yandex\.(ru|com)\/(u|cloud)\//.test(u);
+  const embedUrl = (u) => u + (u.includes('?') ? '&' : '?') + 'iframe=1';
   const wsName = () => Store.WORKSPACES.find((w) => w.id === Store.getWorkspace()).name;
   const head = (title, sub = '', actions = '') => `
     <div class="view-head"><div><h1>${title}</h1>${sub ? `<p class="text-muted">${sub}</p>` : ''}</div>${actions ? `<div class="row row--wrap">${actions}</div>` : ''}</div>`;
@@ -264,31 +265,12 @@ const Pages = (() => {
       <section class="view-card"><h2>Частые вопросы</h2>
         ${FAQ.map(([q, a]) => `<details class="faq"><summary>${q}</summary><p class="text-muted">${a}</p></details>`).join('')}</section>
       <section class="view-card"><h2>Написать в поддержку</h2>
-        <form class="support-form" data-support>
-          <div class="field"><label for="sp-subj">Тема</label><input class="input" id="sp-subj" name="subject" maxlength="120" required placeholder="Коротко о проблеме"></div>
-          <div class="field"><label for="sp-msg">Сообщение</label><textarea class="textarea" id="sp-msg" name="message" rows="5" required placeholder="Что произошло и что вы ожидали увидеть"></textarea></div>
-          <div><button type="submit" class="btn btn--primary">Отправить</button></div>
-        </form></section>
+        ${formOk(formUrl())
+          ? `<iframe class="support-frame" src="${esc(embedUrl(formUrl()))}" title="Форма обращения в поддержку" loading="lazy"></iframe>
+             <p class="text-muted text-sm">Не открывается? <a href="${esc(formUrl())}" target="_blank" rel="noopener">Откройте форму в новой вкладке</a>.</p>`
+          : '<p class="text-muted">Форма обратной связи пока не подключена. Загляните в «Частые вопросы» выше.</p>'}
+      </section>
     </div>`;
-    // Отправка в Google Таблицу (no-cors: ответ Google недоступен, ошибка видна только при отсутствии сети)
-    el.querySelector('[data-support]').onsubmit = async (e) => {
-      e.preventDefault();
-      const f = e.target, p = Store.getProfile(), btn = f.querySelector('[type="submit"]');
-      if (!endpointOk(endpoint())) { UI.toast('Адрес отправки не указан или неверный: проверьте SUPPORT_ENDPOINT в js/config.js (должен заканчиваться на /exec)', 'error', 8000); return; }
-      btn.disabled = true;
-      try {
-        await fetch(endpoint(), {
-          method: 'POST', mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ name: p.name, email: p.email, subject: f.subject.value, message: f.message.value, page: location.href })
-        });
-        f.reset();
-        UI.toast('Сообщение отправлено, спасибо!', 'success');
-      } catch (err) {
-        UI.toast('Не удалось отправить, проверьте соединение', 'error');
-      }
-      btn.disabled = false;
-    };
   }
 
   /* ---------- Маршрутизатор страниц ---------- */
