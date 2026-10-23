@@ -6,8 +6,9 @@
    ========================================================== */
 const Pages = (() => {
   const esc = (s) => UI.escapeHTML(s);
-  // Адрес веб-приложения Google Apps Script (см. support-script.gs): Развернуть → Веб-приложение → скопировать URL
-  const SUPPORT_ENDPOINT = 'https://docs.google.com/spreadsheets/d/1Vm4gO4Ha9JESNipeYyDFGBQtiFS1BOyK/edit?gid=1694288955#gid=1694288955';
+  // Адрес Google Apps Script берётся из js/config.js (APP_CONFIG.SUPPORT_ENDPOINT)
+  const endpoint = () => (window.APP_CONFIG && window.APP_CONFIG.SUPPORT_ENDPOINT) || '';
+  const endpointOk = (u) => u.startsWith('https://script.google.com/macros/s/') && u.endsWith('/exec');
   const wsName = () => Store.WORKSPACES.find((w) => w.id === Store.getWorkspace()).name;
   const head = (title, sub = '', actions = '') => `
     <div class="view-head"><div><h1>${title}</h1>${sub ? `<p class="text-muted">${sub}</p>` : ''}</div>${actions ? `<div class="row row--wrap">${actions}</div>` : ''}</div>`;
@@ -273,10 +274,10 @@ const Pages = (() => {
     el.querySelector('[data-support]').onsubmit = async (e) => {
       e.preventDefault();
       const f = e.target, p = Store.getProfile(), btn = f.querySelector('[type="submit"]');
-      if (SUPPORT_ENDPOINT.includes('ВАШ_ID')) { UI.toast('Укажите SUPPORT_ENDPOINT в js/pages.js', 'error', 6000); return; }
+      if (!endpointOk(endpoint())) { UI.toast('Адрес отправки не указан или неверный: проверьте SUPPORT_ENDPOINT в js/config.js (должен заканчиваться на /exec)', 'error', 8000); return; }
       btn.disabled = true;
       try {
-        await fetch(SUPPORT_ENDPOINT, {
+        await fetch(endpoint(), {
           method: 'POST', mode: 'no-cors',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ name: p.name, email: p.email, subject: f.subject.value, message: f.message.value, page: location.href })
