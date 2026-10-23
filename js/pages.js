@@ -8,7 +8,7 @@ const Pages = (() => {
   const esc = (s) => UI.escapeHTML(s);
   // Ссылка на Яндекс Форму берётся из js/config.js (APP_CONFIG.SUPPORT_FORM_URL)
   const formUrl = () => (window.APP_CONFIG && window.APP_CONFIG.SUPPORT_FORM_URL) || '';
-  const formOk = (u) => /^https:\/\/forms\.yandex\.(ru|com)\/(u|cloud)\//.test(u);
+  const formOk = (u) => /^https:\/\/forms\.yandex\.(ru|com)\//.test(u);   // /u/, /surveys/, /cloud/ — любые формы Яндекса
   const embedUrl = (u) => u + (u.includes('?') ? '&' : '?') + 'iframe=1';
   const wsName = () => Store.WORKSPACES.find((w) => w.id === Store.getWorkspace()).name;
   const head = (title, sub = '', actions = '') => `
@@ -268,7 +268,9 @@ const Pages = (() => {
         ${formOk(formUrl())
           ? `<iframe class="support-frame" src="${esc(embedUrl(formUrl()))}" title="Форма обращения в поддержку" loading="lazy"></iframe>
              <p class="text-muted text-sm">Не открывается? <a href="${esc(formUrl())}" target="_blank" rel="noopener">Откройте форму в новой вкладке</a>.</p>`
-          : '<p class="text-muted">Форма обратной связи пока не подключена. Загляните в «Частые вопросы» выше.</p>'}
+          : formUrl() && !formUrl().includes('ВСТАВЬТЕ')
+            ? `<p class="text-muted">Ссылка на форму не распознана: <code data-no-i18n>${esc(formUrl())}</code>. Она должна начинаться с https://forms.yandex.ru/</p>`
+            : '<p class="text-muted">Форма обратной связи пока не подключена. Загляните в «Частые вопросы» выше.</p>'}
       </section>
     </div>`;
   }
