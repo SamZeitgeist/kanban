@@ -6,10 +6,12 @@
    ========================================================== */
 const Pages = (() => {
   const esc = (s) => UI.escapeHTML(s);
-  // Ссылка на Яндекс Форму берётся из js/config.js (APP_CONFIG.SUPPORT_FORM_URL)
+  // Ссылка на форму (Google Формы или Яндекс Формы) берётся из js/config.js (APP_CONFIG.SUPPORT_FORM_URL)
   const formUrl = () => (window.APP_CONFIG && window.APP_CONFIG.SUPPORT_FORM_URL) || '';
-  const formOk = (u) => /^https:\/\/forms\.yandex\.(ru|com)\//.test(u);   // /u/, /surveys/, /cloud/ — любые формы Яндекса
-  const embedUrl = (u) => u + (u.includes('?') ? '&' : '?') + 'iframe=1';
+  const isGoogle = (u) => /^https:\/\/docs\.google\.com\/forms\/.+\/viewform/.test(u);
+  const isYandex = (u) => /^https:\/\/forms\.yandex\.(ru|com)\//.test(u);
+  const formOk = (u) => isGoogle(u) || isYandex(u);
+  const embedUrl = (u) => u + (u.includes('?') ? '&' : '?') + (isGoogle(u) ? 'embedded=true' : 'iframe=1');
   const wsName = () => Store.WORKSPACES.find((w) => w.id === Store.getWorkspace()).name;
   const head = (title, sub = '', actions = '') => `
     <div class="view-head"><div><h1>${title}</h1>${sub ? `<p class="text-muted">${sub}</p>` : ''}</div>${actions ? `<div class="row row--wrap">${actions}</div>` : ''}</div>`;
@@ -269,7 +271,7 @@ const Pages = (() => {
           ? `<iframe class="support-frame" src="${esc(embedUrl(formUrl()))}" title="Форма обращения в поддержку" loading="lazy"></iframe>
              <p class="text-muted text-sm">Не открывается? <a href="${esc(formUrl())}" target="_blank" rel="noopener">Откройте форму в новой вкладке</a>.</p>`
           : formUrl() && !formUrl().includes('ВСТАВЬТЕ')
-            ? `<p class="text-muted">Ссылка на форму не распознана: <code data-no-i18n>${esc(formUrl())}</code>. Она должна начинаться с https://forms.yandex.ru/</p>`
+            ? `<p class="text-muted">Ссылка на форму не распознана: <code data-no-i18n>${esc(formUrl())}</code>. Для Google Формы нужна ссылка вида https://docs.google.com/forms/d/e/…/viewform (кнопка «Отправить» → значок &lt;&gt;), для Яндекс Формы — https://forms.yandex.ru/…</p>`
             : '<p class="text-muted">Форма обратной связи пока не подключена. Загляните в «Частые вопросы» выше.</p>'}
       </section>
     </div>`;
