@@ -11,6 +11,11 @@ const Pages = (() => {
   const isGoogle = (u) => /^https:\/\/docs\.google\.com\/forms\/.+\/viewform/.test(u);
   const isYandex = (u) => /^https:\/\/forms\.yandex\.(ru|com)\//.test(u);
   const formOk = (u) => isGoogle(u) || isYandex(u);
+  // «Родная» форма в стиле сайта → отправка в Google Форму (нужны entry-номера полей в config.js)
+  const gFields = () => (window.APP_CONFIG && window.APP_CONFIG.SUPPORT_FORM_FIELDS) || {};
+  const realEntry = (v) => /^entry\.\d+$/.test(v || '') && !/^entry\.0{6}/.test(v);   // заглушки entry.0000000001 не считаются
+  const gNative = () => isGoogle(formUrl()) && realEntry(gFields().subject) && realEntry(gFields().message);
+  const gAction = () => formUrl().replace(/\/viewform.*$/, '/formResponse');
   const embedUrl = (u) => u + (u.includes('?') ? '&' : '?') + (isGoogle(u) ? 'embedded=true' : 'iframe=1');
   const wsName = () => Store.WORKSPACES.find((w) => w.id === Store.getWorkspace()).name;
   const head = (title, sub = '', actions = '') => `
@@ -267,14 +272,42 @@ const Pages = (() => {
       <section class="view-card"><h2>Частые вопросы</h2>
         ${FAQ.map(([q, a]) => `<details class="faq"><summary>${q}</summary><p class="text-muted">${a}</p></details>`).join('')}</section>
       <section class="view-card"><h2>Написать в поддержку</h2>
-        ${formOk(formUrl())
+        ${gNative() ? `
+          <form class="support-form" data-support>
+            <div class="field"><label for="sp-subj">Тема</label><input class="input" id="sp-subj" maxlength="150" required placeholder="Коротко о проблеме"></div>
+            <div class="field"><label for="sp-msg">Сообщение</label><textarea class="textarea" id="sp-msg" rows="5" maxlength="3000" required placeholder="Что произошло и что вы ожидали увидеть"></textarea></div>
+            <div class="field"><label for="sp-mail">Email для ответа</label><input class="input" id="sp-mail" type="email" maxlength="150" required value="${esc(Store.getProfile().email)}" placeholder="name@example.com"></div>
+            <div><button type="submit" class="btn btn--primary">Отправить</button></div>
+          </form>`
+        : formOk(formUrl())
           ? `<iframe class="support-frame" src="${esc(embedUrl(formUrl()))}" title="Форма обращения в поддержку" loading="lazy"></iframe>
              <p class="text-muted text-sm">Не открывается? <a href="${esc(formUrl())}" target="_blank" rel="noopener">Откройте форму в новой вкладке</a>.</p>`
           : formUrl() && !formUrl().includes('ВСТАВЬТЕ')
-            ? `<p class="text-muted">Ссылка на форму не распознана: <code data-no-i18n>${esc(formUrl())}</code>. Для Google Формы нужна ссылка вида https://docs.google.com/forms/d/e/…/viewform (кнопка «Отправить» → значок &lt;&gt;), для Яндекс Формы — https://forms.yandex.ru/…</p>`
+            ? `<p class="text-muted">Ссылка на форму не распознана: <code data-no-i18n>${esc(formUrl())}</code>. Для Google Формы нужна ссылка вида https://docs.google.com/forms/d/e/…/viewform, для Яндекс Формы — https://forms.yandex.ru/…</p>`
             : '<p class="text-muted">Форма обратной связи пока не подключена. Загляните в «Частые вопросы» выше.</p>'}
       </section>
     </div>`;
+
+    const form = el.querySelector('[data-support]');
+    if (form) form.onsubmit = async (e) => {
+      e.preventDefault();
+      const fld = gFields(), btn = form.querySelector('[type="submit"]');
+      const body = new URLSearchParams();
+      body.set(fld.subject, form.querySelector('#sp-subj').value);
+      body.set(fld.message, form.querySelector('#sp-msg').value);
+      if (realEntry(fld.email)) body.set(fld.email, form.querySelector('#sp-mail').value);
+      body.set('fvv', '1'); body.set('pageHistory', '0');
+      btn.disabled = true;
+      try {
+        // no-cors: ответ Google недоступен — об ошибке узнаём только при отсутствии сети
+        await fetch(gAction(), { method: 'POST', mode: 'no-cors', body });
+        form.reset();
+        UI.toast('Сообщение отправлено, спасибо!', 'success');
+      } catch (err) {
+        UI.toast('Не удалось отправить, проверьте соединение', 'error');
+      }
+      btn.disabled = false;
+    };
   }
 
   /* ---------- Маршрутизатор страниц ---------- */
