@@ -5,8 +5,8 @@
 window.APP_CONFIG = {
   SUPPORT_FORM_URL: 'https://docs.google.com/forms/d/e/1FAIpQLSesHjSLKFXEIBxUXoyzW2pd3NZ2oX1doFFXlNVjWUnVC4iHig/viewform?usp=header',
   SUPPORT_FORM_FIELDS: {
-    subject: 'entry.0000000001',   // поле «Тема»
-    message: 'entry.0000000002',   // поле «Сообщение»
-    email:   'entry.0000000003'    // поле «Email для ответа»
+    subject: 'entry.502119941',   // поле «Тема»
+    message: 'entry.106114660',   // поле «Сообщение»
+    email:   'entry.745186397'    // поле «Email для ответа»
   }
 };
