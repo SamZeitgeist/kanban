@@ -3,7 +3,7 @@
    SUPPORT_FORM_FIELDS — номера полей формы (entry.XXXXXXXX): как их найти — Форма → ⋮ → «Получить ссылку для предварительного заполнения».
    Если поля заполнены, на сайте показывается красивая форма в стиле сайта; если нет — встроенная Google Форма. */
 window.APP_CONFIG = {
-  SUPPORT_FORM_URL: 'ВСТАВЬТЕ_СЮДА_ССЫЛКУ_НА_ФОРМУ',
+  SUPPORT_FORM_URL: 'https://docs.google.com/forms/d/e/1FAIpQLSesHjSLKFXEIBxUXoyzW2pd3NZ2oX1doFFXlNVjWUnVC4iHig/viewform?usp=header',
   SUPPORT_FORM_FIELDS: {
     subject: 'entry.0000000001',   // поле «Тема»
     message: 'entry.0000000002',   // поле «Сообщение»
