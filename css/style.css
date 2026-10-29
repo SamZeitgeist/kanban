@@ -189,7 +189,7 @@ img { max-width: 100%; display: block; }
 .app-main { flex: 1; min-height: 0; overflow-y: auto; background: var(--bg); }
 
 /* Контейнер обычной страницы (доски, профиль) */
-.page { max-width: 1120px; margin: 0 auto; padding: var(--space-5); }
+.page { max-width: 1480px; margin: 0 auto; padding: var(--space-5); }
 /* Страница доски занимает всё место — колонки скроллятся горизонтально */
 .page--board { max-width: none; padding: 0; }
 
